@@ -132,6 +132,28 @@ body {
 
 }
 
+.date-row {
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    max-width: 650px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.hierarchy-row {
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    margin-bottom: 16px;
+
+}
+
+
 
 label {
 
@@ -479,7 +501,39 @@ Filters
 </div>
 
 
-<div class="filters">
+<div class="filters date-row">
+
+
+<div class="filter-card">
+
+<label>
+
+From Date
+
+</label>
+
+<select id="fromDate"></select>
+
+</div>
+
+
+<div class="filter-card">
+
+<label>
+
+To Date
+
+</label>
+
+<select id="toDate"></select>
+
+</div>
+
+
+</div>
+
+
+<div class="filters hierarchy-row">
 
 
 <div class="filter-card">
@@ -495,7 +549,6 @@ Business Head
 </div>
 
 
-
 <div class="filter-card">
 
 <label>
@@ -509,7 +562,6 @@ Sales Head
 </div>
 
 
-
 <div class="filter-card">
 
 <label>
@@ -521,7 +573,6 @@ ASM
 <select id="asm"></select>
 
 </div>
-
 
 
 <div class="filter-card">
@@ -538,7 +589,6 @@ Branch
 
 
 </div>
-
 
 
 <!-- OVERVIEW -->
@@ -731,6 +781,36 @@ style="margin-top:15px">
 
 
 
+<!-- TOP PROMOTER WITH BRANCH -->
+
+
+<div class="section-title">
+
+🏆 Top 10 Promoter with Branch
+
+</div>
+
+
+<div class="chart-card">
+
+<div id="promoterChart"></div>
+
+</div>
+
+
+<div
+class="table-card"
+style="margin-top:15px">
+
+<div class="table-wrap">
+
+<table id="topPromoterTable"></table>
+
+</div>
+
+</div>
+
+
 <!-- SUMMARY -->
 
 
@@ -884,6 +964,56 @@ dailyColumns[
     dailyColumns.length - 1
 
 ];
+
+
+
+function parseDashboardDate(value) {
+
+    const parts = String(value).split("-");
+
+    return new Date(
+        Number(parts[2]),
+        Number(parts[1]) - 1,
+        Number(parts[0])
+    );
+
+}
+
+
+function getSelectedDailyColumns() {
+
+    const fromValue = document.getElementById("fromDate").value;
+    const toValue = document.getElementById("toDate").value;
+
+    const fromDate = fromValue
+        ? parseDashboardDate(fromValue)
+        : parseDashboardDate(dailyColumns[0]);
+
+    const toDate = toValue
+        ? parseDashboardDate(toValue)
+        : parseDashboardDate(dailyColumns[dailyColumns.length - 1]);
+
+    return dailyColumns.filter(column => {
+
+        const currentDate = parseDashboardDate(column);
+
+        return currentDate >= fromDate
+            && currentDate <= toDate;
+
+    });
+
+}
+
+
+function getSelectedPeriodTotal(data, selectedColumns) {
+
+    return selectedColumns.reduce(
+        (grandTotal, column) =>
+            grandTotal + sumColumn(data, column),
+        0
+    );
+
+}
 
 
 // ============================================================
@@ -1157,6 +1287,29 @@ setOptions(
 
 
 
+setOptions(
+
+    "fromDate",
+
+    dailyColumns,
+
+    dailyColumns[0]
+
+);
+
+
+setOptions(
+
+    "toDate",
+
+    dailyColumns,
+
+    dailyColumns[dailyColumns.length - 1]
+
+);
+
+
+
 // ============================================================
 // FILTER DATA
 // ============================================================
@@ -1294,7 +1447,7 @@ function getFilteredData() {
 // UPDATE DEPENDENT FILTERS
 // ============================================================
 
-function updateDependentFilters(changed) {{
+function updateDependentFilters(changed) {
 
     const bh =
         document
@@ -1319,17 +1472,17 @@ function updateDependentFilters(changed) {{
 
     let bhData = rawData;
 
-    if (bh !== "All") {{
+    if (bh !== "All") {
 
         bhData = rawData.filter(
             row =>
                 row["Business Head"] === bh
         );
 
-    }}
+    }
 
 
-    if (changed === "businessHead") {{
+    if (changed === "businessHead") {
 
         setOptions(
             "salesHead",
@@ -1360,22 +1513,22 @@ function updateDependentFilters(changed) {{
 
         return;
 
-    }}
+    }
 
 
     let shData = bhData;
 
-    if (currentSH !== "All") {{
+    if (currentSH !== "All") {
 
         shData = bhData.filter(
             row =>
                 row["Sales Head"] === currentSH
         );
 
-    }}
+    }
 
 
-    if (changed === "salesHead") {{
+    if (changed === "salesHead") {
 
         setOptions(
             "asm",
@@ -1397,22 +1550,22 @@ function updateDependentFilters(changed) {{
 
         return;
 
-    }}
+    }
 
 
     let asmData = shData;
 
-    if (currentASM !== "All") {{
+    if (currentASM !== "All") {
 
         asmData = shData.filter(
             row =>
                 row["ASM"] === currentASM
         );
 
-    }}
+    }
 
 
-    if (changed === "asm") {{
+    if (changed === "asm") {
 
         setOptions(
             "branch",
@@ -1423,9 +1576,9 @@ function updateDependentFilters(changed) {{
             "All"
         );
 
-    }}
+    }
 
-}}
+}
 
 
 
@@ -1480,7 +1633,9 @@ function getTop10(
 
     data,
 
-    groupColumn
+    groupColumn,
+
+    valueColumns = dailyColumns
 
 ) {
 
@@ -1517,9 +1672,21 @@ function getTop10(
 
                 +=
 
-                toNumber(
+                valueColumns.reduce(
 
-                    row["Period Total"]
+                    (rowTotal, column) =>
+
+                        rowTotal
+
+                        +
+
+                        toNumber(
+
+                            row[column]
+
+                        ),
+
+                    0
 
                 );
 
@@ -1588,6 +1755,162 @@ function getTop10(
 
 }
 
+
+
+
+
+// ============================================================
+// TOP 10 PROMOTER WITH BRANCH
+// ============================================================
+
+
+function getTop10PromotersWithBranch(
+
+    data,
+
+    valueColumns = dailyColumns
+
+) {
+
+
+    const grouped = {};
+
+
+    data.forEach(
+
+        row => {
+
+
+            const promoter =
+
+                row["Salesperson"]
+
+                ||
+
+                "Unknown";
+
+
+            const branch =
+
+                row["Branch"]
+
+                ||
+
+                "Unknown";
+
+
+            const key =
+
+                promoter
+
+                +
+
+                "|||"
+
+                +
+
+                branch;
+
+
+            if (
+
+                !grouped[key]
+
+            ) {
+
+                grouped[key] = {
+
+                    promoter,
+
+                    branch,
+
+                    value: 0
+
+                };
+
+            }
+
+
+            grouped[key].value
+
+                +=
+
+                valueColumns.reduce(
+
+                    (rowTotal, column) =>
+
+                        rowTotal
+
+                        +
+
+                        toNumber(
+
+                            row[column]
+
+                        ),
+
+                    0
+
+                );
+
+        }
+
+    );
+
+
+    return Object
+
+        .values(
+
+            grouped
+
+        )
+
+        .sort(
+
+            (a,b) =>
+
+                b.value
+
+                -
+
+                a.value
+
+        )
+
+        .slice(0,10)
+
+        .map(
+
+            (item,index) =>
+
+                ({
+
+                    rank: index + 1,
+
+                    promoter: item.promoter,
+
+                    branch: item.branch,
+
+                    value: item.value,
+
+                    name:
+
+                        item.promoter
+
+                        +
+
+                        " - "
+
+                        +
+
+                        item.branch
+
+                })
+
+        );
+
+}
 
 
 // ============================================================
@@ -1814,7 +2137,9 @@ function renderTable(
 
 function updateSummary(
 
-    data
+    data,
+
+    valueColumns = dailyColumns
 
 ) {
 
@@ -1863,9 +2188,21 @@ function updateSummary(
 
                 +
 
-                toNumber(
+                valueColumns.reduce(
 
-                    row["Period Total"]
+                    (rowTotal, column) =>
+
+                        rowTotal
+
+                        +
+
+                        toNumber(
+
+                            row[column]
+
+                        ),
+
+                    0
 
                 );
 
@@ -2032,16 +2369,41 @@ function updateDashboard() {
         getFilteredData();
 
 
+    const selectedDailyColumns =
+
+        getSelectedDailyColumns();
+
+
+    if (
+
+        selectedDailyColumns.length === 0
+
+    ) {
+
+        return;
+
+    }
+
+
+    const selectedLatestDateColumn =
+
+        selectedDailyColumns[
+
+            selectedDailyColumns.length - 1
+
+        ];
+
+
     // KPI
 
 
     const periodTotal =
 
-        sumColumn(
+        getSelectedPeriodTotal(
 
             data,
 
-            "Period Total"
+            selectedDailyColumns
 
         );
 
@@ -2052,7 +2414,7 @@ function updateDashboard() {
 
             data,
 
-            latestDateColumn
+            selectedLatestDateColumn
 
         );
 
@@ -2150,7 +2512,7 @@ function updateDashboard() {
 
     const dailyValues =
 
-        dailyColumns.map(
+        selectedDailyColumns.map(
 
             column =>
 
@@ -2175,7 +2537,7 @@ function updateDashboard() {
 
                 x:
 
-                    dailyColumns,
+                    selectedDailyColumns,
 
                 y:
 
@@ -2255,7 +2617,9 @@ function updateDashboard() {
 
             data,
 
-            "Sales Head"
+            "Sales Head",
+
+            selectedDailyColumns
 
         )
 
@@ -2273,7 +2637,9 @@ function updateDashboard() {
 
             data,
 
-            "ASM"
+            "ASM",
+
+            selectedDailyColumns
 
         )
 
@@ -2289,7 +2655,9 @@ function updateDashboard() {
 
             data,
 
-            "Branch"
+            "Branch",
+
+            selectedDailyColumns
 
         );
 
@@ -2414,12 +2782,154 @@ function updateDashboard() {
     );
 
 
+    // TOP 10 PROMOTER WITH BRANCH
+
+
+    const topPromoters =
+
+        getTop10PromotersWithBranch(
+
+            data,
+
+            selectedDailyColumns
+
+        );
+
+
+    Plotly.react(
+
+        "promoterChart",
+
+        [
+
+            {
+
+                x:
+
+                    [...topPromoters]
+
+                    .reverse()
+
+                    .map(
+
+                        item =>
+
+                            item.value
+
+                    ),
+
+                y:
+
+                    [...topPromoters]
+
+                    .reverse()
+
+                    .map(
+
+                        item =>
+
+                            item.name
+
+                    ),
+
+                type:
+
+                    "bar",
+
+                orientation:
+
+                    "h"
+
+            }
+
+        ],
+
+        {
+
+            title:
+
+                "Top 10 Promoters with Branch",
+
+            height:
+
+                500,
+
+            margin:
+
+                {
+
+                    l:
+
+                        220
+
+                }
+
+        },
+
+        {
+
+            responsive:
+
+                true
+
+        }
+
+    );
+
+
+    renderTable(
+
+        "topPromoterTable",
+
+        [
+
+            "Rank",
+
+            "Promoter",
+
+            "Branch",
+
+            "Value"
+
+        ],
+
+        topPromoters.map(
+
+            item =>
+
+                ({
+
+                    Rank:
+
+                        item.rank,
+
+                    Promoter:
+
+                        item.promoter,
+
+                    Branch:
+
+                        item.branch,
+
+                    Value:
+
+                        item.value
+
+                })
+
+        )
+
+    );
+
+
     // SUMMARY
 
 
     updateSummary(
 
-        data
+        data,
+
+        selectedDailyColumns
 
     );
 
@@ -2441,7 +2951,7 @@ function updateDashboard() {
 
             "Salesperson",
 
-            ...dailyColumns,
+            ...selectedDailyColumns,
 
             "Period Total"
 
@@ -2584,6 +3094,80 @@ document
 
 .getElementById(
 
+    "fromDate"
+
+)
+
+.addEventListener(
+
+    "change",
+
+    () => {
+
+        const fromDate = parseDashboardDate(
+            document.getElementById("fromDate").value
+        );
+
+        const toDate = parseDashboardDate(
+            document.getElementById("toDate").value
+        );
+
+        if (fromDate > toDate) {
+
+            document.getElementById("toDate").value =
+                document.getElementById("fromDate").value;
+
+        }
+
+        updateDashboard();
+
+    }
+
+);
+
+
+
+document
+
+.getElementById(
+
+    "toDate"
+
+)
+
+.addEventListener(
+
+    "change",
+
+    () => {
+
+        const fromDate = parseDashboardDate(
+            document.getElementById("fromDate").value
+        );
+
+        const toDate = parseDashboardDate(
+            document.getElementById("toDate").value
+        );
+
+        if (toDate < fromDate) {
+
+            document.getElementById("fromDate").value =
+                document.getElementById("toDate").value;
+
+        }
+
+        updateDashboard();
+
+    }
+
+);
+
+
+
+document
+
+.getElementById(
+
     "summaryLevel"
 
 )
@@ -2597,7 +3181,9 @@ document
 
         updateSummary(
 
-            getFilteredData()
+            getFilteredData(),
+
+            getSelectedDailyColumns()
 
         );
 
@@ -2632,6 +3218,11 @@ document
             getFilteredData();
 
 
+        const selectedDailyColumns =
+
+            getSelectedDailyColumns();
+
+
         const columns =
 
             [
@@ -2646,7 +3237,7 @@ document
 
                 "Salesperson",
 
-                ...dailyColumns,
+                ...selectedDailyColumns,
 
                 "Period Total"
 
