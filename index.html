@@ -70,7 +70,7 @@ body {
 
 .filters {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 }
 
@@ -432,25 +432,6 @@ class="kpi-value">
 </div>
 
 
-<div class="kpi-card">
-
-<div class="kpi-title">
-
-Total Days
-
-</div>
-
-<div
-id="totalDays"
-class="kpi-value">
-
-0
-
-</div>
-
-</div>
-
-
 </div>
 
 
@@ -741,7 +722,7 @@ function toNumber(value) {
 
 function formatNumber(value) {
 
-    return Math.round(Number(value || 0))
+    return Number(value || 0)
 
     .toLocaleString(
 
@@ -2226,23 +2207,6 @@ function updateDashboard() {
             formatNumber(
 
                 salespersons
-
-            );
-
-
-    // --------------------------------------------------------
-    // TOTAL DAYS
-    // --------------------------------------------------------
-
-    document
-
-        .getElementById("totalDays")
-
-        .textContent =
-
-            formatNumber(
-
-                selectedDailyColumns.length
 
             );
 
