@@ -16,6 +16,62 @@ Daily Change Incentive Dashboard
 </title>
 
 
+
+<div id="page2" class="new-company-page page-hidden">
+
+    <div class="new-header">
+        <div class="new-title">📊 New Company – Daily Incentive Dashboard</div>
+        <div class="new-subtitle">
+            Daily incentive data from
+            <b>18/09/2026</b>
+            to
+            <b>20/09/2026</b>
+        </div>
+    </div>
+
+    <div class="new-filters">
+        <div class="new-card">
+            <label>Sales Person</label>
+            <select id="newSalesPerson"></select>
+        </div>
+        <div class="new-card">
+            <label>Date</label>
+            <select id="newDate"></select>
+        </div>
+    </div>
+
+    <div class="new-kpis">
+        <div class="new-card"><div class="new-kpi-title">Sales Persons</div><div id="newPeopleCount" class="new-kpi-value">0</div></div>
+        <div class="new-card"><div class="new-kpi-title">Days</div><div id="newDaysCount" class="new-kpi-value">0</div></div>
+        <div class="new-card"><div class="new-kpi-title">Grand Total</div><div id="newGrandTotal" class="new-kpi-value">0</div></div>
+        <div class="new-card"><div class="new-kpi-title">Sangeetha Staff</div><div id="newSangeethaStaff" class="new-kpi-value">0</div></div>
+        <div class="new-card"><div class="new-kpi-title">Bal</div><div id="newBal" class="new-kpi-value">0</div></div>
+    </div>
+
+    <div class="new-section-title">Daily Incentive</div>
+    <div class="new-card">
+        <div id="newDailyChart" style="height:430px"></div>
+    </div>
+
+    <div class="new-section-title">Sales Person Details</div>
+    <div class="new-card">
+        <div class="new-table-wrap"><table id="newMainTable" class="new-table"></table></div>
+    </div>
+
+    <div class="new-section-title">Incentive Details</div>
+    <div class="new-card">
+        <div class="new-table-wrap"><table id="newIncentiveTable" class="new-table"></table></div>
+    </div>
+
+    <div class="new-nav-buttons">
+        <button onclick="showPage(1)">← Previous Page</button>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Top</button>
+    </div>
+
+    <div class="footer">created by balaji</div>
+</div>
+
+
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 
@@ -242,6 +298,101 @@ button:hover {
 
 }
 
+
+
+.page { display: block; }
+.page-hidden { display: none !important; }
+
+.page-nav {
+    max-width: 1600px;
+    margin: 15px auto 0;
+    padding: 0 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.page-nav button {
+    width: auto;
+    min-width: 150px;
+    padding: 10px 20px;
+    background: #17365d;
+}
+
+.page-nav button.active {
+    background: #2563eb;
+}
+
+.new-company-page {
+    max-width: 1600px;
+    margin: 24px auto;
+    padding: 24px;
+    background: #f5f7fb;
+}
+
+.new-header {
+    background: linear-gradient(135deg, #17365d, #1f4e78);
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.new-title { font-size: 30px; font-weight: 700; }
+.new-subtitle { margin-top: 7px; font-size: 15px; opacity: .9; }
+
+.new-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.new-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.new-kpis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.new-kpi-title { color: #6b7280; font-size: 13px; font-weight: 600; }
+.new-kpi-value { font-size: 25px; font-weight: 700; margin-top: 7px; }
+
+.new-section-title {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 28px 0 12px;
+}
+
+.new-table-wrap { overflow: auto; max-height: 620px; }
+.new-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.new-table th, .new-table td { padding: 9px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; text-align: left; }
+.new-table th { position: sticky; top: 0; background: #f9fafb; z-index: 1; }
+
+.new-nav-buttons { display: flex; gap: 12px; margin-top: 22px; }
+.new-nav-buttons button { width: auto; flex: 1; }
+
+@media(max-width:900px) {
+    .new-kpis { grid-template-columns: repeat(2, 1fr); }
+    .new-filters { grid-template-columns: 1fr; }
+}
+
+@media(max-width:600px) {
+    .page-nav { padding: 0 10px; }
+    .page-nav button { min-width: 0; flex: 1; }
+    .new-company-page { padding: 12px; margin: 12px auto; }
+    .new-kpis { grid-template-columns: 1fr; }
+    .new-title { font-size: 23px; }
+}
+
 </style>
 
 </head>
@@ -250,7 +401,13 @@ button:hover {
 <body>
 
 
-<div class="container">
+<div class="page-nav">
+    <button id="page1Button" class="active" onclick="showPage(1)">← Existing Company</button>
+    <button id="page2Button" onclick="showPage(2)">New Company →</button>
+</div>
+
+
+<div id="page1" class="container page active">
 
 
 <div class="dashboard-title">
@@ -3180,6 +3337,174 @@ console.log(
 
 
 updateDashboard();
+
+
+
+
+// ============================================================
+// TWO-PAGE NAVIGATION
+// ============================================================
+
+function showPage(pageNumber) {
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    const b1 = document.getElementById("page1Button");
+    const b2 = document.getElementById("page2Button");
+
+    if (pageNumber === 2) {
+        page1.classList.add("page-hidden");
+        page2.classList.remove("page-hidden");
+        b1.classList.remove("active");
+        b2.classList.add("active");
+        updateNewCompanyPage();
+    } else {
+        page2.classList.add("page-hidden");
+        page1.classList.remove("page-hidden");
+        b2.classList.remove("active");
+        b1.classList.add("active");
+    }
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+// ============================================================
+// NEW COMPANY PAGE
+// ============================================================
+
+const newCompanyData = [{"Sales Person": "Sunil G K-13203", "18/09/2026": 11700.0, "19/09/2026": 0.0, "20/09/2026": 900.0, "Grand Total": 12600.0, "Sangeetha Staff": 10080.0, "Bal": 2520.0, "Period Total": 12600.0}, {"Sales Person": "Govindaiah H R-28593", "18/09/2026": 4410.0, "19/09/2026": 900.0, "20/09/2026": 1350.0, "Grand Total": 6660.0, "Sangeetha Staff": 5328.0, "Bal": 1332.0, "Period Total": 6660.0}, {"Sales Person": "Waseem Hyder-27902", "18/09/2026": 4590.0, "19/09/2026": 720.0, "20/09/2026": 1260.0, "Grand Total": 6570.0, "Sangeetha Staff": 5256.0, "Bal": 1314.0, "Period Total": 6570.0}, {"Sales Person": "Deepika-Samsung/M", "18/09/2026": 900.0, "19/09/2026": 1800.0, "20/09/2026": 2250.0, "Grand Total": 4950.0, "Sangeetha Staff": 3960.0, "Bal": 990.0, "Period Total": 4950.0}, {"Sales Person": "Geetha -Haier/CD", "18/09/2026": 630.0, "19/09/2026": 2610.0, "20/09/2026": 1350.0, "Grand Total": 4590.0, "Sangeetha Staff": 3672.0, "Bal": 918.0, "Period Total": 4590.0}, {"Sales Person": "Umme Kulsum-28639", "18/09/2026": 2880.0, "19/09/2026": 1530.0, "20/09/2026": 0.0, "Grand Total": 4410.0, "Sangeetha Staff": 3528.0, "Bal": 882.0, "Period Total": 4410.0}, {"Sales Person": "Apple promoter", "18/09/2026": 2700.0, "19/09/2026": 450.0, "20/09/2026": 450.0, "Grand Total": 3600.0, "Sangeetha Staff": 2880.0, "Bal": 720.0, "Period Total": 3600.0}, {"Sales Person": "Syedmansoor - 26841", "18/09/2026": 1080.0, "19/09/2026": 1800.0, "20/09/2026": 0.0, "Grand Total": 2880.0, "Sangeetha Staff": 2304.0, "Bal": 576.0, "Period Total": 2880.0}, {"Sales Person": "Harsha-Oppo/M", "18/09/2026": 450.0, "19/09/2026": 450.0, "20/09/2026": 1800.0, "Grand Total": 2700.0, "Sangeetha Staff": 2160.0, "Bal": 540.0, "Period Total": 2700.0}, {"Sales Person": "Vikas-Whirlpool/CD", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 1620.0, "Grand Total": 2070.0, "Sangeetha Staff": 1656.0, "Bal": 414.0, "Period Total": 2070.0}, {"Sales Person": "Anjum-Dyson/CD", "18/09/2026": 1080.0, "19/09/2026": 900.0, "20/09/2026": 0.0, "Grand Total": 1980.0, "Sangeetha Staff": 1584.0, "Bal": 396.0, "Period Total": 1980.0}, {"Sales Person": "Google promoter", "18/09/2026": 1350.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 1350.0, "Sangeetha Staff": 1080.0, "Bal": 270.0, "Period Total": 1350.0}, {"Sales Person": "Balaji-Vivo/M", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 1350.0, "Grand Total": 1350.0, "Sangeetha Staff": 1080.0, "Bal": 270.0, "Period Total": 1350.0}, {"Sales Person": "Sandeep-Google/M", "18/09/2026": 900.0, "19/09/2026": 0.0, "20/09/2026": 450.0, "Grand Total": 1350.0, "Sangeetha Staff": 1080.0, "Bal": 270.0, "Period Total": 1350.0}, {"Sales Person": "MI Promoter", "18/09/2026": 1350.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 1350.0, "Sangeetha Staff": 1080.0, "Bal": 270.0, "Period Total": 1350.0}, {"Sales Person": "Supreet R-28637", "18/09/2026": 1080.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 1080.0, "Sangeetha Staff": 864.0, "Bal": 216.0, "Period Total": 1080.0}, {"Sales Person": "P JAI SINGH -28767", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 1080.0, "Grand Total": 1080.0, "Sangeetha Staff": 864.0, "Bal": 216.0, "Period Total": 1080.0}, {"Sales Person": "Swetha M-28762", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 900.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Zaid -Nothing/M", "18/09/2026": 900.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Yashas-LG/CD", "18/09/2026": 0.0, "19/09/2026": 900.0, "20/09/2026": 0.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Rayan-Vivo/M", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 900.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Chandru-Bosch/CD", "18/09/2026": 900.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Gopinath-28766", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 900.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Tabrez-Oppo/M", "18/09/2026": 450.0, "19/09/2026": 450.0, "20/09/2026": 0.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Santhakumar-Samsung/CD", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 900.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Muzamil-Apple/M", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 450.0, "Grand Total": 900.0, "Sangeetha Staff": 720.0, "Bal": 180.0, "Period Total": 900.0}, {"Sales Person": "Chethan Kumar G-28788", "18/09/2026": 0.0, "19/09/2026": 630.0, "20/09/2026": 0.0, "Grand Total": 630.0, "Sangeetha Staff": 504.0, "Bal": 126.0, "Period Total": 630.0}, {"Sales Person": "Babitha-Godrej/M", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 630.0, "Grand Total": 630.0, "Sangeetha Staff": 504.0, "Bal": 126.0, "Period Total": 630.0}, {"Sales Person": "K SATISH-10539", "18/09/2026": 360.0, "19/09/2026": 180.0, "20/09/2026": 0.0, "Grand Total": 540.0, "Sangeetha Staff": 432.0, "Bal": 108.0, "Period Total": 540.0}, {"Sales Person": "Samsung Promoter", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Ameen-Xiaomi/M", "18/09/2026": 0.0, "19/09/2026": 450.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Vivo Promoter", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Mohhamed faiz-Samsung/M", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Samsundhar-Xiaomi/M", "18/09/2026": 0.0, "19/09/2026": 450.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Realme promoter", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Laxmikant Babu Itagar-28705", "18/09/2026": 450.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Shaku M M-28680", "18/09/2026": 0.0, "19/09/2026": 450.0, "20/09/2026": 0.0, "Grand Total": 450.0, "Sangeetha Staff": 360.0, "Bal": 90.0, "Period Total": 450.0}, {"Sales Person": "Ravi H - 27653", "18/09/2026": 270.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 270.0, "Sangeetha Staff": 216.0, "Bal": 54.0, "Period Total": 270.0}, {"Sales Person": "Sindhu S Maradi - 23804", "18/09/2026": 180.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 180.0, "Sangeetha Staff": 144.0, "Bal": 36.0, "Period Total": 180.0}, {"Sales Person": "Nothing Promoter.", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 0.0, "Sangeetha Staff": 0.0, "Bal": 0.0, "Period Total": 0.0}, {"Sales Person": "Savitha-28646", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 0.0, "Sangeetha Staff": 0.0, "Bal": 0.0, "Period Total": 0.0}, {"Sales Person": "Oppo promoter", "18/09/2026": 0.0, "19/09/2026": 0.0, "20/09/2026": 0.0, "Grand Total": 0.0, "Sangeetha Staff": 0.0, "Bal": 0.0, "Period Total": 0.0}];
+const newCompanyDailyColumns = ["18/09/2026", "19/09/2026", "20/09/2026"];
+const newCompanyIncentiveData = [{"Catg": "Housekeeping", "Incentives": "745.2", "Person": "Prema", "Designation": "Housekeeping", "Inc Amount": 745.2}, {"Catg": "Concierge", "Incentives": "1490.4", "Person": "Amisha", "Designation": "Concierge", "Inc Amount": 745.2}, {"Catg": "Audit & billing", "Incentives": "5216.400000000001", "Person": "Ragini", "Designation": "Concierge", "Inc Amount": 745.2}, {"Catg": "Darling team", "Incentives": "7452", "Person": "Satish", "Designation": "Audit & billing", "Inc Amount": 1738.8000000000002}, {"Catg": "Total", "Incentives": "14904", "Person": "Sindhu", "Designation": "Audit & billing", "Inc Amount": 1738.8000000000002}];
+
+function newToNumber(value) {
+    if (value === null || value === undefined || value === "") return 0;
+    const n = Number(String(value).replace(/,/g, "").replace(/₹/g, ""));
+    return Number.isFinite(n) ? n : 0;
+}
+
+function newFormatNumber(value) {
+    return Math.round(newToNumber(value)).toLocaleString("en-IN");
+}
+
+function newRenderTable(id, columns, rows) {
+    const table = document.getElementById(id);
+    if (!table) return;
+
+    let html = "<thead><tr>";
+    columns.forEach(c => html += `<th>${c}</th>`);
+    html += "</tr></thead><tbody>";
+
+    rows.forEach(row => {
+        html += "<tr>";
+        columns.forEach(c => {
+            let value = row[c] ?? "";
+            if (["Grand Total", "Sangeetha Staff", "Bal", "Inc Amount", "Period Total", ...newCompanyDailyColumns].includes(c)) {
+                value = newFormatNumber(value);
+            }
+            html += `<td>${String(value)}</td>`;
+        });
+        html += "</tr>";
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+}
+
+function updateNewCompanyPage() {
+    const selectedPerson = document.getElementById("newSalesPerson").value;
+    const selectedDate = document.getElementById("newDate").value;
+
+    let rows = newCompanyData.slice();
+
+    if (selectedPerson) {
+        rows = rows.filter(r => r["Sales Person"] === selectedPerson);
+    }
+
+    let selectedRows = rows;
+    if (selectedDate) {
+        selectedRows = rows.map(r => ({
+            "Sales Person": r["Sales Person"],
+            [selectedDate]: newToNumber(r[selectedDate]),
+            "Grand Total": newToNumber(r["Grand Total"]),
+            "Sangeetha Staff": newToNumber(r["Sangeetha Staff"]),
+            "Bal": newToNumber(r["Bal"]),
+            "Period Total": newToNumber(r[selectedDate])
+        }));
+    }
+
+    const people = new Set(rows.map(r => r["Sales Person"])).size;
+    const days = selectedDate ? 1 : newCompanyDailyColumns.length;
+    const grandTotal = selectedDate
+        ? rows.reduce((sum, r) => sum + newToNumber(r[selectedDate]), 0)
+        : rows.reduce((sum, r) => sum + newToNumber(r["Period Total"]), 0);
+    const staff = rows.reduce((sum, r) => sum + newToNumber(r["Sangeetha Staff"]), 0);
+    const bal = rows.reduce((sum, r) => sum + newToNumber(r["Bal"]), 0);
+
+    document.getElementById("newPeopleCount").textContent = newFormatNumber(people);
+    document.getElementById("newDaysCount").textContent = newFormatNumber(days);
+    document.getElementById("newGrandTotal").textContent = newFormatNumber(grandTotal);
+    document.getElementById("newSangeethaStaff").textContent = newFormatNumber(staff);
+    document.getElementById("newBal").textContent = newFormatNumber(bal);
+
+    const chartDates = selectedDate ? [selectedDate] : newCompanyDailyColumns;
+    const chartValues = chartDates.map(d => rows.reduce((sum, r) => sum + newToNumber(r[d]), 0));
+
+    Plotly.react(
+        "newDailyChart",
+        [{
+            x: chartDates,
+            y: chartValues,
+            type: "bar",
+            text: chartValues.map(v => newFormatNumber(v)),
+            textposition: "auto"
+        }],
+        {
+            title: "Daily Incentive",
+            margin: {t: 60, r: 20, b: 70, l: 70},
+            responsive: true
+        },
+        {responsive: true}
+    );
+
+    const mainColumns = [
+        "Sales Person",
+        ...newCompanyDailyColumns,
+        "Grand Total",
+        "Sangeetha Staff",
+        "Bal",
+        "Period Total"
+    ];
+
+    newRenderTable("newMainTable", mainColumns, selectedRows);
+
+    let incentiveRows = newCompanyIncentiveData.slice();
+    if (selectedPerson) {
+        incentiveRows = incentiveRows.filter(r => r["Person"] === selectedPerson);
+    }
+    newRenderTable(
+        "newIncentiveTable",
+        ["Catg", "Incentives", "Person", "Designation", "Inc Amount"],
+        incentiveRows
+    );
+}
+
+function initialiseNewCompanyPage() {
+    const personSelect = document.getElementById("newSalesPerson");
+    const dateSelect = document.getElementById("newDate");
+
+    const people = [...new Set(newCompanyData.map(r => r["Sales Person"]))].sort();
+
+    personSelect.innerHTML = `<option value="">All Sales Persons</option>` +
+        people.map(p => `<option value="${String(p).replace(/"/g, '&quot;')}">${p}</option>`).join("");
+
+    dateSelect.innerHTML = `<option value="">All Dates</option>` +
+        newCompanyDailyColumns.map(d => `<option value="${d}">${d}</option>`).join("");
+
+    personSelect.addEventListener("change", updateNewCompanyPage);
+    dateSelect.addEventListener("change", updateNewCompanyPage);
+    updateNewCompanyPage();
+}
+
+initialiseNewCompanyPage();
 
 
 </script>
