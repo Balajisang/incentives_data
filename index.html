@@ -184,6 +184,71 @@ select {
     padding: 12px;
 }
 
+.daily-incentive-chart-card {
+    margin-bottom: 24px;
+    padding: 18px 16px 14px;
+}
+.daily-incentive-chart-note {
+    color: #64748b;
+    font-size: 13px;
+    margin: 2px 0 16px;
+}
+.daily-incentive-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    min-height: 285px;
+    padding: 18px 8px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.daily-incentive-bar-item {
+    flex: 0 0 62px;
+    min-width: 62px;
+    min-height: 245px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.daily-incentive-bar-value {
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #0f766e;
+    white-space: nowrap;
+    max-width: 75px;
+}
+.daily-incentive-bar-track {
+    width: 38px;
+    height: 190px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: #edf2f7;
+    border-radius: 8px 8px 3px 3px;
+}
+.daily-incentive-bar {
+    width: 100%;
+    min-height: 2px;
+    border-radius: 8px 8px 3px 3px;
+    background: linear-gradient(180deg, #38bdf8 0%, #2563eb 100%);
+    transition: height .25s ease;
+}
+.daily-incentive-bar-date {
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.daily-incentive-chart-empty {
+    width: 100%;
+    padding: 36px 16px;
+    color: #64748b;
+    text-align: center;
+}
+
 .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -197,10 +262,17 @@ select {
 
 .ranking-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
     align-items: start;
     margin-bottom: 22px;
+}
+.ranking-pair {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
 }
 .ranking-panel {
     min-width: 0;
@@ -214,6 +286,16 @@ select {
 .ranking-panel .rank-card { padding: 9px 8px; border-radius: 8px; box-shadow: none; margin-bottom: 7px; }
 .ranking-panel .rank-name { display: inline-block; max-width: 190px; overflow-wrap: anywhere; font-size: 13px; margin-left: 7px; }
 .ranking-panel .rank-number, .ranking-panel .rank-value { font-size: 13px; }
+.ranking-panel .rank-name { max-width: 150px; }
+.rank-card.rank-gold { background: linear-gradient(100deg, #fff7cc, #fffdf4); border: 1px solid #e8c547; }
+.rank-card.rank-silver { background: linear-gradient(100deg, #eef2f7, #ffffff); border: 1px solid #b8c2cc; }
+.rank-card.rank-bronze { background: linear-gradient(100deg, #ffeadb, #fffaf6); border: 1px solid #d99a6c; }
+.rank-medal { display: inline-block; min-width: 28px; font-size: 16px; }
+.rank-card.rank-gold .rank-number { color: #9a6700; }
+.rank-card.rank-silver .rank-number { color: #536273; }
+.rank-card.rank-bronze .rank-number { color: #9a4f1f; }
+@media (max-width: 1150px) { .ranking-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .ranking-pair { grid-template-columns: 1fr; } }
 
 .rank-row {
     display: flex;
@@ -407,251 +489,6 @@ button:hover {
     .new-kpis { grid-template-columns: 1fr; }
     .new-title { font-size: 23px; }
 }
-
-
-/* ===== Colorful PulseMetrics-inspired incentive dashboard theme ===== */
-:root {
-    --bg-main: #080d19;
-    --bg-card: #111a2d;
-    --line: rgba(148, 163, 184, .20);
-    --text-main: #edf4ff;
-    --text-muted: #a8b6ce;
-    --cyan: #38bdf8;
-    --blue: #6366f1;
-    --green: #34d399;
-    --pink: #f472b6;
-    --amber: #fbbf24;
-}
-html { scroll-behavior: smooth; }
-body {
-    background:
-      radial-gradient(ellipse at 10% 0%, rgba(14,165,233,.14), transparent 35%),
-      radial-gradient(ellipse at 95% 8%, rgba(99,102,241,.15), transparent 32%),
-      var(--bg-main);
-    color: var(--text-main);
-    font-family: Inter, "Segoe UI", Arial, sans-serif;
-}
-.container {
-    max-width: 1700px;
-    padding: 26px clamp(14px, 2.2vw, 34px);
-}
-.dashboard-title {
-    color: #f8fbff;
-    font-size: clamp(25px, 3vw, 36px);
-    letter-spacing: -.8px;
-    margin: 8px 0 8px;
-    background: linear-gradient(90deg, #67e8f9, #818cf8 52%, #f0abfc);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.dashboard-subtitle { color: var(--text-muted); margin-bottom: 24px; }
-.section-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #e4efff;
-    font-size: 20px;
-    margin: 30px 0 14px;
-}
-.section-title::before {
-    content: "";
-    display: inline-block;
-    width: 4px;
-    height: 23px;
-    border-radius: 10px;
-    background: linear-gradient(180deg, #22d3ee, #6366f1);
-}
-.filter-card, .chart-card, .table-card, .rank-card, .kpi-card,
-.ranking-panel, .new-card {
-    background: linear-gradient(145deg, rgba(20,31,52,.96), rgba(13,21,38,.97));
-    border: 1px solid var(--line);
-    border-radius: 15px;
-    color: var(--text-main);
-    box-shadow: 0 12px 30px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.025);
-}
-.filter-card {
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-}
-.filter-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #22d3ee, #6366f1, #c084fc);
-}
-label { color: #c4d3ea; font-size: 12px; letter-spacing: .35px; text-transform: uppercase; }
-select {
-    color: #f1f5f9;
-    background-color: #0b1324;
-    border: 1px solid #34435f;
-    border-radius: 9px;
-    outline: none;
-    transition: border-color .18s, box-shadow .18s;
-}
-select:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,.14); }
-select option { background: #111a2d; color: #f1f5f9; }
-.kpis { gap: 15px; }
-.kpi-card {
-    padding: 19px;
-    min-height: 122px;
-    position: relative;
-    overflow: hidden;
-    transition: transform .2s, border-color .2s;
-}
-.kpi-card:hover { transform: translateY(-3px); border-color: rgba(56,189,248,.55); }
-.kpi-card::after {
-    content: "";
-    position: absolute;
-    width: 105px; height: 105px;
-    border-radius: 50%;
-    right: -28px; bottom: -48px;
-    background: var(--glow, rgba(56,189,248,.14));
-    filter: blur(2px);
-}
-.kpi-card:nth-child(1) { --glow: rgba(34,211,238,.24); border-top: 3px solid #22d3ee; }
-.kpi-card:nth-child(2) { --glow: rgba(52,211,153,.22); border-top: 3px solid #34d399; }
-.kpi-card:nth-child(3) { --glow: rgba(129,140,248,.24); border-top: 3px solid #818cf8; }
-.kpi-card:nth-child(4) { --glow: rgba(244,114,182,.22); border-top: 3px solid #f472b6; }
-.kpi-card:nth-child(5) { --glow: rgba(251,191,36,.22); border-top: 3px solid #fbbf24; }
-.kpi-title { color: #a8b6ce; font-size: 13px; text-transform: uppercase; letter-spacing: .4px; }
-.kpi-value { color: #f8fbff; font-size: clamp(23px, 2.2vw, 31px); letter-spacing: -.6px; }
-.ranking-grid { gap: 17px; }
-.ranking-panel {
-    padding: 16px;
-    min-width: 0;
-    position: relative;
-    overflow: hidden;
-}
-.ranking-panel:nth-child(1) { border-top: 3px solid #22d3ee; }
-.ranking-panel:nth-child(2) { border-top: 3px solid #818cf8; }
-.ranking-panel:nth-child(3) { border-top: 3px solid #34d399; }
-.ranking-panel h3 { color: #e8f2ff; font-size: 15px; letter-spacing: .2px; }
-.rank-card {
-    padding: 10px 11px;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    background: rgba(255,255,255,.035);
-    border: 1px solid rgba(148,163,184,.12);
-    box-shadow: none;
-    transition: background .18s, transform .18s;
-}
-.rank-card:hover { background: rgba(56,189,248,.09); transform: translateX(2px); }
-.ranking-panel .rank-number { color: #67e8f9; min-width: 22px; }
-.ranking-panel .rank-name { color: #dbeafe; }
-.ranking-panel .rank-value { color: #6ee7b7; }
-.table-card { padding: 14px; overflow: hidden; }
-.table-wrap, .new-table-wrap { border-radius: 10px; }
-table, .new-table { color: #dbe7f7; font-size: 12px; }
-th, .new-table th {
-    background: #17243b;
-    color: #aee8ff;
-    border-bottom: 1px solid #34435f;
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: .35px;
-}
-td, .new-table td { border-bottom: 1px solid rgba(148,163,184,.13); }
-tbody tr:nth-child(even) { background: rgba(255,255,255,.025); }
-tbody tr:hover { background: rgba(56,189,248,.075); }
-button {
-    background: linear-gradient(110deg, #0891b2, #4f46e5);
-    box-shadow: 0 6px 16px rgba(79,70,229,.2);
-    transition: transform .15s, filter .15s;
-}
-button:hover { filter: brightness(1.12); transform: translateY(-1px); }
-.footer { border-color: var(--line); color: #92a4bf; }
-.page-nav { max-width: 1700px; padding: 0 clamp(14px, 2.2vw, 34px); }
-.page-nav button {
-    background: #111a2d;
-    border: 1px solid #34435f;
-    color: #b8c7de;
-}
-.page-nav button.active {
-    color: white;
-    background: linear-gradient(110deg, #0891b2, #4f46e5);
-    border-color: transparent;
-}
-.new-company-page { background: transparent; color: var(--text-main); }
-.new-header {
-    background: linear-gradient(120deg, #0e7490, #3730a3 65%, #7e22ce);
-    border: 1px solid rgba(125,211,252,.24);
-    box-shadow: 0 16px 35px rgba(0,0,0,.24);
-}
-.new-kpi-title { color: #a8b6ce; }
-.new-kpi-value { color: #f8fbff; }
-.new-section-title { color: #e4efff; }
-.new-table th { position: sticky; top: 0; background: #17243b; color: #aee8ff; z-index: 1; }
-@media(max-width:1000px) {
-    .ranking-grid { grid-template-columns: 1fr; }
-    .container { padding-top: 18px; }
-}
-@media(max-width:600px) {
-    .dashboard-title { font-size: 25px; }
-    .ranking-panel { padding: 12px; }
-    .section-title { font-size: 18px; }
-}
-
-
-
-/* ===== Light, colorful dashboard theme ===== */
-:root {
-    --bg-main: #f3f6fc;
-    --bg-card: #ffffff;
-    --line: #dbe4f0;
-    --text-main: #24324a;
-    --text-muted: #64748b;
-    --cyan: #0891b2;
-    --blue: #4f46e5;
-    --green: #059669;
-    --pink: #db2777;
-    --amber: #d97706;
-}
-body {
-    background: radial-gradient(ellipse at 8% 0%, rgba(34,211,238,.12), transparent 34%),
-                radial-gradient(ellipse at 95% 5%, rgba(129,140,248,.13), transparent 32%),
-                #f3f6fc;
-    color: #24324a;
-}
-.dashboard-title {
-    background: linear-gradient(90deg, #0e7490, #4f46e5 55%, #c026d3);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.dashboard-subtitle, .footer { color: #64748b; }
-.section-title, .new-section-title { color: #24324a; }
-.filter-card, .chart-card, .table-card, .rank-card, .kpi-card,
-.ranking-panel, .new-card {
-    background: #ffffff;
-    border: 1px solid #dbe4f0;
-    color: #24324a;
-    box-shadow: 0 7px 22px rgba(30, 64, 175, .07);
-}
-.filter-card::before { background: linear-gradient(90deg, #06b6d4, #6366f1, #d946ef); }
-label { color: #475569; }
-select { color: #1e293b; background-color: #ffffff; border-color: #cbd5e1; }
-select option { background: #ffffff; color: #1e293b; }
-.kpi-title, .new-kpi-title { color: #64748b; }
-.kpi-value, .new-kpi-value { color: #172554; }
-.ranking-panel h3 { color: #1e3a8a; }
-.rank-card { background: #f8fafc; border-color: #e2e8f0; }
-.rank-card:hover { background: #eff6ff; }
-.ranking-panel .rank-number { color: #0891b2; }
-.ranking-panel .rank-name { color: #334155; }
-.ranking-panel .rank-value { color: #047857; }
-table, .new-table { color: #334155; }
-th, .new-table th { background: #eaf1fb; color: #1e40af; border-bottom-color: #cbd5e1; }
-td, .new-table td { border-bottom-color: #e2e8f0; }
-tbody tr:nth-child(even) { background: #f8fafc; }
-tbody tr:hover { background: #eff6ff; }
-.page-nav button { background: #ffffff; border-color: #cbd5e1; color: #475569; }
-.page-nav button.active { color: #ffffff; background: linear-gradient(110deg, #0891b2, #4f46e5); }
-.new-company-page { background: transparent; color: #24324a; }
-.new-header { background: linear-gradient(120deg, #0e7490, #4338ca 65%, #a21caf); }
-.new-table th { background: #eaf1fb; color: #1e40af; }
 
 </style>
 
@@ -871,28 +708,32 @@ class="kpi-value">
 </div>
 
 
-<div class="section-title">
-
-🏆 Top 10 Performers
-
+<div class="section-title">📊 Day-wise Total Incentives</div>
+<div class="chart-card daily-incentive-chart-card">
+    <div class="daily-incentive-chart-note">Daily incentive total for the selected dates and filters</div>
+    <div id="dailyIncentiveChart" class="daily-incentive-chart"></div>
 </div>
+
+
+<div class="section-title">🏆 Top 10 and Bottom 10 Rankings</div>
 
 <div class="ranking-grid">
-    <div class="ranking-panel"><h3>Top 10 Sales Head</h3><div id="topSalesHead"></div></div>
-    <div class="ranking-panel"><h3>Top 10 ASM</h3><div id="topASM"></div></div>
-    <div class="ranking-panel"><h3>Top 10 Branch</h3><div id="topBranch"></div></div>
-</div>
-
-<div class="section-title">
-
-🔻 Bottom 10 Performers
-
-</div>
-
-<div class="ranking-grid">
-    <div class="ranking-panel"><h3>Bottom 10 Sales Head</h3><div id="bottomSalesHead"></div></div>
-    <div class="ranking-panel"><h3>Bottom 10 ASM</h3><div id="bottomASM"></div></div>
-    <div class="ranking-panel"><h3>Bottom 10 Branch</h3><div id="bottomBranch"></div></div>
+    <div class="ranking-pair">
+        <div class="ranking-panel"><h3>🏆 Top 10 Sales Head</h3><div id="topSalesHead"></div></div>
+        <div class="ranking-panel"><h3>🔻 Bottom 10 Sales Head</h3><div id="bottomSalesHead"></div></div>
+    </div>
+    <div class="ranking-pair">
+        <div class="ranking-panel"><h3>🏆 Top 10 ASM</h3><div id="topASM"></div></div>
+        <div class="ranking-panel"><h3>🔻 Bottom 10 ASM</h3><div id="bottomASM"></div></div>
+    </div>
+    <div class="ranking-pair">
+        <div class="ranking-panel"><h3>🏆 Top 10 Branch</h3><div id="topBranch"></div></div>
+        <div class="ranking-panel"><h3>🔻 Bottom 10 Branch</h3><div id="bottomBranch"></div></div>
+    </div>
+    <div class="ranking-pair">
+        <div class="ranking-panel"><h3>🏆 Top 10 Salesperson (with Branch)</h3><div id="topSalesperson"></div></div>
+        <div class="ranking-panel"><h3>🔻 Bottom 10 Salesperson (with Branch)</h3><div id="bottomSalesperson"></div></div>
+    </div>
 </div>
 
 <div class="section-title">
@@ -2027,8 +1868,52 @@ function getTop10PromotersWithBranch(
 
 
 // ============================================================
+// BOTTOM 10 SALESPERSONS WITH BRANCH NAME
+// ============================================================
+
+function getBottom10SalespersonsWithBranch(data, valueColumns) {
+    const grouped = {};
+
+    data.forEach(row => {
+        const promoter = row["Salesperson"] || "Unknown";
+        const branch = row["Branch"] || "Unknown";
+        const key = promoter + "|||" + branch;
+
+        if (!grouped[key]) {
+            grouped[key] = { promoter, branch, value: 0 };
+        }
+
+        valueColumns.forEach(column => {
+            grouped[key].value += toNumber(row[column]);
+        });
+    });
+
+    return Object.values(grouped)
+        .sort((a, b) => a.value - b.value)
+        .slice(0, 10)
+        .map((item, index) => ({
+            rank: index + 1,
+            promoter: item.promoter,
+            branch: item.branch,
+            value: item.value,
+            name: item.promoter + " - " + item.branch
+        }));
+}
+
+
+// ============================================================
 // RANK DISPLAY
 // ============================================================
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 
 function renderRanks(
 
@@ -2059,39 +1944,20 @@ function renderRanks(
                 .createElement("div");
 
 
-            card.className =
-
-                "rank-card";
-
+            const rank = Number(item.rank) || 0;
+            const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : "";
+            const rankClass = rank === 1 ? " rank-gold" : rank === 2 ? " rank-silver" : rank === 3 ? " rank-bronze" : "";
+            card.className = "rank-card" + rankClass;
 
             card.innerHTML = `
-
                 <div class="rank-row">
-
                     <div>
-
-                        <span class="rank-number">
-
-                            #${item.rank}
-
-                        </span>
-
-                        <span class="rank-name">
-
-                            ${item.name}
-
-                        </span>
-
+                        <span class="rank-medal">${medal}</span>
+                        <span class="rank-number">#${item.rank}</span>
+                        <span class="rank-name">${escapeHtml(String(item.name ?? ""))}</span>
                     </div>
-
-                    <div class="rank-value">
-
-                        ${formatNumber(item.value)}
-
-                    </div>
-
+                    <div class="rank-value">${formatNumber(item.value)}</div>
                 </div>
-
             `;
 
 
@@ -2210,6 +2076,41 @@ function renderTable(
 
     table.innerHTML = html;
 
+}
+
+
+// ============================================================
+// DAY-WISE TOTAL INCENTIVES BAR GRAPH
+// ============================================================
+
+function renderDailyIncentiveChart(data, selectedDailyColumns) {
+    const container = document.getElementById("dailyIncentiveChart");
+    if (!container) return;
+
+    if (!selectedDailyColumns || selectedDailyColumns.length === 0) {
+        container.innerHTML = '<div class="daily-incentive-chart-empty">No daily data available for the selected filters.</div>';
+        return;
+    }
+
+    const dailyTotals = selectedDailyColumns.map(date => ({
+        date,
+        value: data.reduce((total, row) => total + toNumber(row[date]), 0)
+    }));
+    const maxValue = Math.max(...dailyTotals.map(item => item.value), 1);
+
+    container.innerHTML = dailyTotals.map(item => {
+        const height = item.value > 0 ? Math.max((item.value / maxValue) * 190, 3) : 0;
+        const safeDate = String(item.date).replace(/"/g, '&quot;');
+        return `
+            <div class="daily-incentive-bar-item" title="${safeDate}: ${formatNumber(item.value)}">
+                <div class="daily-incentive-bar-value">${formatNumber(item.value)}</div>
+                <div class="daily-incentive-bar-track">
+                    <div class="daily-incentive-bar" style="height: ${height}px"></div>
+                </div>
+                <div class="daily-incentive-bar-date">${safeDate}</div>
+            </div>
+        `;
+    }).join("");
 }
 
 
@@ -2408,6 +2309,12 @@ function updateDashboard() {
 
 
     // --------------------------------------------------------
+    // DAY-WISE TOTAL INCENTIVES BAR GRAPH
+    // --------------------------------------------------------
+    renderDailyIncentiveChart(data, selectedDailyColumns);
+
+
+    // --------------------------------------------------------
     // TOP 10 AND BOTTOM 10: SALES HEAD, ASM, BRANCH
     // --------------------------------------------------------
 
@@ -2418,6 +2325,8 @@ function updateDashboard() {
     renderRanks("bottomSalesHead", getBottom10(data, "Sales Head", selectedDailyColumns));
     renderRanks("bottomASM", getBottom10(data, "ASM", selectedDailyColumns));
     renderRanks("bottomBranch", getBottom10(data, "Branch", selectedDailyColumns));
+    renderRanks("topSalesperson", getTop10PromotersWithBranch(data, selectedDailyColumns));
+    renderRanks("bottomSalesperson", getBottom10SalespersonsWithBranch(data, selectedDailyColumns));
 
 
     // --------------------------------------------------------
