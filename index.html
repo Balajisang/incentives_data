@@ -159,22 +159,8 @@ select {
 
 .kpis {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
-}
-
-.staff-promoter-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin: 0 0 24px;
-}
-
-@media (max-width: 1200px) {
-    .staff-promoter-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-    .staff-promoter-grid { grid-template-columns: 1fr; }
 }
 
 .kpi-card {
@@ -721,6 +707,9 @@ class="kpi-value">
 <div class="kpi-card">
 <div class="kpi-title">Staff Count</div>
 <div id="staffCount" class="kpi-value">0</div>
+</div>
+
+<div class="kpi-card">
 <div class="kpi-title">Staff Total Value</div>
 <div id="staffValue" class="kpi-value">0</div>
 </div>
@@ -728,6 +717,9 @@ class="kpi-value">
 <div class="kpi-card">
 <div class="kpi-title">Promoter Count</div>
 <div id="promoterCount" class="kpi-value">0</div>
+</div>
+
+<div class="kpi-card">
 <div class="kpi-title">Promoter Total Value</div>
 <div id="promoterValue" class="kpi-value">0</div>
 </div>
@@ -1603,6 +1595,27 @@ function getSelectedDailyColumns() {
 // SUM COLUMN
 // ============================================================
 
+// ============================================================
+// SELECTED PERIOD VALUE (FIX: this function was missing)
+// ============================================================
+
+function getSelectedPeriodValue(data) {
+    const selectedColumns = getSelectedDailyColumns();
+
+    return data.reduce((total, row) => {
+        const rowValue = selectedColumns.reduce((sum, column) => {
+            return sum + toNumber(row[column]);
+        }, 0);
+
+        return total + rowValue;
+    }, 0);
+}
+
+
+// ============================================================
+// SUM COLUMN
+// ============================================================
+
 function sumColumn(
 
     data,
@@ -2157,33 +2170,23 @@ function updateDashboard() {
         getSelectedDailyColumns();
 
 
-    // STAFF AND PROMOTER KPIs (based on currently selected dates)
-    const staffRows = data.filter(row =>
-        String(row["EMP Type"] || "").trim().toLowerCase() === "staff"
-    );
-    const promoterRows = data.filter(row =>
-        String(row["EMP Type"] || "").trim().toLowerCase() === "promoter"
-    );
+    // STAFF AND PROMOTER KPIs.
+    // Find EMP Type column without being sensitive to header casing/spaces.
+    function getEmpType(row) {
+        const empTypeKey = Object.keys(row).find(
+            key => String(key).replace(/\s+/g, " ").trim().toLowerCase() === "emp type"
+        );
+        return empTypeKey ? String(row[empTypeKey] ?? "").trim().toLowerCase() : "";
+    }
 
-    const getEmployeeCount = rows => new Set(
-        rows.map(row => String(row["Salesperson"] || "").trim())
-            .filter(name => name && name !== "Unknown")
-    ).size;
+    const staffRows = data.filter(row => getEmpType(row) === "staff");
+    const promoterRows = data.filter(row => getEmpType(row) === "promoter");
 
-    const getSelectedPeriodValue = rows => {
-        let total = 0;
+    const staffCount = staffRows.length;
+    const promoterCount = promoterRows.length;
 
-        rows.forEach(row => {
-            selectedDailyColumns.forEach(column => {
-                const value = Number(row[column]);
-                if (Number.isFinite(value)) {
-                    total += value;
-                }
-            });
-        });
-
-        return total;
-    };
+    const staffValue = getSelectedPeriodValue(staffRows);
+    const promoterValue = getSelectedPeriodValue(promoterRows);
 
     if (
 
@@ -2363,13 +2366,13 @@ function updateDashboard() {
             ) + " Days";
 
     document.getElementById("staffCount").textContent =
-        formatNumber(getEmployeeCount(staffRows));
+    formatNumber(staffCount);
     document.getElementById("staffValue").textContent =
-        formatNumber(getSelectedPeriodValue(staffRows));
+        formatNumber(staffValue);
     document.getElementById("promoterCount").textContent =
-        formatNumber(promoterRows.length);
+        formatNumber(promoterCount);
     document.getElementById("promoterValue").textContent =
-        formatNumber(getSelectedPeriodValue(promoterRows));
+        formatNumber(promoterValue);
 
     // --------------------------------------------------------
     // DAY-WISE TOTAL INCENTIVES BAR GRAPH
