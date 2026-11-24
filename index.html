@@ -31,12 +31,28 @@ Daily Change Incentive Dashboard
 
     <div class="new-filters">
         <div class="new-card">
+            <label>From Date</label>
+            <select id="newFromDate"></select>
+        </div>
+        <div class="new-card">
+            <label>To Date</label>
+            <select id="newToDate"></select>
+        </div>
+        <div class="new-card">
             <label>Sales Person</label>
             <select id="newSalesPerson"></select>
         </div>
         <div class="new-card">
-            <label>Date</label>
-            <select id="newDate"></select>
+            <label>ASM</label>
+            <select id="newASM"><option>—</option></select>
+        </div>
+        <div class="new-card">
+            <label>Branch</label>
+            <select id="newBranch"><option>—</option></select>
+        </div>
+        <div class="new-card">
+            <label>EMP Type</label>
+            <select id="newEmpType"><option>—</option></select>
         </div>
     </div>
 
@@ -46,6 +62,18 @@ Daily Change Incentive Dashboard
         <div class="new-card"><div class="new-kpi-title">Grand Total</div><div id="newGrandTotal" class="new-kpi-value">0</div></div>
         <div class="new-card"><div class="new-kpi-title">Sangeetha Staff</div><div id="newSangeethaStaff" class="new-kpi-value">0</div></div>
         <div class="new-card"><div class="new-kpi-title">Bal</div><div id="newBal" class="new-kpi-value">0</div></div>
+    </div>
+
+    <div class="new-section-title">🏆 Top 5 and Bottom 5 Sales Persons</div>
+    <div class="new-ranking-grid">
+        <div class="new-ranking-panel">
+            <h3>🏆 Top 5 Sales Persons</h3>
+            <div id="newTopFive"></div>
+        </div>
+        <div class="new-ranking-panel">
+            <h3>🔻 Bottom 5 Sales Persons</h3>
+            <div id="newBottomFive"></div>
+        </div>
     </div>
 
     <div class="new-section-title">Sales Person Details</div>
@@ -443,6 +471,50 @@ button:hover {
     grid-template-columns: 2fr 1fr;
     gap: 16px;
     margin-top: 20px;
+}
+
+.new-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.new-ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+.new-ranking-panel {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.new-ranking-panel h3 {
+    margin: 4px 0 14px;
+    color: #17365d;
+    font-size: 18px;
+}
+.new-rank-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+    font-size: 13px;
+}
+.new-rank-name { font-weight: 600; overflow-wrap: anywhere; }
+.new-rank-value { font-weight: 700; white-space: nowrap; color: #17365d; }
+.new-empty { color: #64748b; padding: 14px; }
+@media(max-width:900px) {
+    .new-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .new-ranking-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:600px) {
+    .new-filters { grid-template-columns: 1fr; }
 }
 
 .new-card {
@@ -3013,52 +3085,90 @@ function newRenderTable(id, columns, rows) {
     table.innerHTML = html;
 }
 
+function newParseDate(value) {
+    const parts = String(value || "").split("/");
+    if (parts.length !== 3) return null;
+    return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+}
+
+function newGetSelectedDates() {
+    const fromValue = document.getElementById("newFromDate").value;
+    const toValue = document.getElementById("newToDate").value;
+    const fromDate = newParseDate(fromValue);
+    const toDate = newParseDate(toValue);
+    return newCompanyDailyColumns.filter(d => {
+        const current = newParseDate(d);
+        return current && fromDate && toDate && current >= fromDate && current <= toDate;
+    });
+}
+
+function newPeriodValue(row, dates) {
+    return dates.reduce((sum, date) => sum + newToNumber(row[date]), 0);
+}
+
+function newRenderSalesPersonRanks(rows, dates, elementId, ascending) {
+    const totals = rows.map(row => ({
+        name: row["Sales Person"],
+        value: newPeriodValue(row, dates)
+    })).sort((a, b) => ascending ? a.value - b.value : b.value - a.value)
+      .slice(0, 5);
+
+    const target = document.getElementById(elementId);
+    if (!totals.length) {
+        target.innerHTML = '<div class="new-empty">No sales person data available.</div>';
+        return;
+    }
+
+    target.innerHTML = totals.map((item, index) => `
+        <div class="new-rank-row">
+            <span class="new-rank-name">#${index + 1} &nbsp;${String(item.name)}</span>
+            <span class="new-rank-value">${newFormatNumber(item.value)}</span>
+        </div>
+    `).join("");
+}
+
 function updateNewCompanyPage() {
     const selectedPerson = document.getElementById("newSalesPerson").value;
-    const selectedDate = document.getElementById("newDate").value;
+    const selectedDates = newGetSelectedDates();
 
     let rows = newCompanyData.slice();
-
     if (selectedPerson) {
         rows = rows.filter(r => r["Sales Person"] === selectedPerson);
     }
 
-    let selectedRows = rows;
-    if (selectedDate) {
-        selectedRows = rows.map(r => ({
-            "Sales Person": r["Sales Person"],
-            [selectedDate]: newToNumber(r[selectedDate]),
-            "Grand Total": newToNumber(r["Grand Total"]),
-            "Sangeetha Staff": newToNumber(r["Sangeetha Staff"]),
-            "Bal": newToNumber(r["Bal"]),
-            "Period Total": newToNumber(r[selectedDate])
-        }));
-    }
+    const selectedRows = rows.map(r => {
+        const output = { "Sales Person": r["Sales Person"] };
+        selectedDates.forEach(date => output[date] = newToNumber(r[date]));
+        output["Grand Total"] = newPeriodValue(r, selectedDates);
+        output["Sangeetha Staff"] = newToNumber(r["Sangeetha Staff"]);
+        output["Bal"] = newToNumber(r["Bal"]);
+        output["Period Total"] = newPeriodValue(r, selectedDates);
+        return output;
+    });
 
     const people = new Set(rows.map(r => r["Sales Person"])).size;
-    const days = selectedDate ? 1 : newCompanyDailyColumns.length;
-    const grandTotal = selectedDate
-        ? rows.reduce((sum, r) => sum + newToNumber(r[selectedDate]), 0)
-        : rows.reduce((sum, r) => sum + newToNumber(r["Period Total"]), 0);
+    const grandTotal = rows.reduce((sum, r) => sum + newPeriodValue(r, selectedDates), 0);
     const staff = rows.reduce((sum, r) => sum + newToNumber(r["Sangeetha Staff"]), 0);
     const bal = rows.reduce((sum, r) => sum + newToNumber(r["Bal"]), 0);
 
     document.getElementById("newPeopleCount").textContent = newFormatNumber(people);
-    document.getElementById("newDaysCount").textContent = newFormatNumber(days);
+    document.getElementById("newDaysCount").textContent = newFormatNumber(selectedDates.length);
     document.getElementById("newGrandTotal").textContent = newFormatNumber(grandTotal);
     document.getElementById("newSangeethaStaff").textContent = newFormatNumber(staff);
     document.getElementById("newBal").textContent = newFormatNumber(bal);
 
     const mainColumns = [
         "Sales Person",
-        ...newCompanyDailyColumns,
+        ...selectedDates,
         "Grand Total",
         "Sangeetha Staff",
         "Bal",
         "Period Total"
     ];
-
     newRenderTable("newMainTable", mainColumns, selectedRows);
+
+    newRenderSalesPersonRanks(rows, selectedDates, "newTopFive", false);
+    newRenderSalesPersonRanks(rows, selectedDates, "newBottomFive", true);
 
     let incentiveRows = newCompanyIncentiveData.slice();
     if (selectedPerson) {
@@ -3073,21 +3183,42 @@ function updateNewCompanyPage() {
 
 function initialiseNewCompanyPage() {
     const personSelect = document.getElementById("newSalesPerson");
-    const dateSelect = document.getElementById("newDate");
+    const fromDateSelect = document.getElementById("newFromDate");
+    const toDateSelect = document.getElementById("newToDate");
 
     const people = [...new Set(newCompanyData.map(r => r["Sales Person"]))].sort();
-
     personSelect.innerHTML = `<option value="">All Sales Persons</option>` +
         people.map(p => `<option value="${String(p).replace(/"/g, '&quot;')}">${p}</option>`).join("");
 
-    dateSelect.innerHTML = `<option value="">All Dates</option>` +
-        newCompanyDailyColumns.map(d => `<option value="${d}">${d}</option>`).join("");
+    const dateOptions = newCompanyDailyColumns.map(d => `<option value="${d}">${d}</option>`).join("");
+    fromDateSelect.innerHTML = dateOptions;
+    toDateSelect.innerHTML = dateOptions;
+    if (newCompanyDailyColumns.length) {
+        fromDateSelect.value = newCompanyDailyColumns[0];
+        toDateSelect.value = newCompanyDailyColumns[newCompanyDailyColumns.length - 1];
+    }
+
+    ["newASM", "newBranch", "newEmpType"].forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">—</option>';
+        select.value = "";
+    });
 
     personSelect.addEventListener("change", updateNewCompanyPage);
-    dateSelect.addEventListener("change", updateNewCompanyPage);
+    fromDateSelect.addEventListener("change", () => {
+        const from = newParseDate(fromDateSelect.value);
+        const to = newParseDate(toDateSelect.value);
+        if (from && to && from > to) toDateSelect.value = fromDateSelect.value;
+        updateNewCompanyPage();
+    });
+    toDateSelect.addEventListener("change", () => {
+        const from = newParseDate(fromDateSelect.value);
+        const to = newParseDate(toDateSelect.value);
+        if (from && to && to < from) fromDateSelect.value = toDateSelect.value;
+        updateNewCompanyPage();
+    });
     updateNewCompanyPage();
 }
-
 initialiseNewCompanyPage();
 
 
